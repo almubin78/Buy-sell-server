@@ -25,7 +25,7 @@ async function run(){
 
     }
 }
-run().catch(err => console.log('This is from run().catch(err=>console.log', err))
+run().catch(err => console.log(err))
 
 
 app.get('/', (req, res) => {
