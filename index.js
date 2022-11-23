@@ -10,15 +10,15 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster2.yighk3h.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@assignment-12.cotcugk.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run(){
     try{
-        const serviceCollection = client.db("geniusCarSixtySeven").collection("services");
+        const customerCollection = client.db("assignmentDatabase").collection("customers");
         
-        // rest coad goes here
+        
         
     }
     finally{
@@ -29,9 +29,9 @@ run().catch(err => console.log('This is from run().catch(err=>console.log', err)
 
 
 app.get('/', (req, res) => {
-    res.send('Module 65 Client View')
+    res.send('Server side running')
 });
 
 app.listen(port, () => {
-    console.log('Its is CMD for module 65');
+    console.log('Last Assignment in Progress, ', port);
 })
