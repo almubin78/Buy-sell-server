@@ -66,6 +66,11 @@ async function run(){
             const getPost = await sellerCollection.find({role:'seller'}).toArray();
             res.send(getPost)
         })
+        app.get('/buyer',async(req,res)=>{
+            
+            const getPost = await sellerCollection.find({role:'buyer'}).toArray();
+            res.send(getPost)
+        })
         app.get('/allUsers',async(req,res)=>{
             const query = {}
             const getPost = await sellerCollection.find(query).toArray();
@@ -76,12 +81,21 @@ async function run(){
             const getPost = await sellerCollection.find(query).toArray();
             res.send(getPost)
         })
-        app.post('/post',async(req,res)=>{
+        
+  //Posts Routes      
+        app.post('/posts',async(req,res)=>{
             const newPost = req.body;
             const getPost = await sellPosts.insertOne(newPost);
             res.send(getPost)
         })
+        app.get('/posts',async(req,res)=>{
+            const query = {};
+            const allPosts = await sellPosts.find(query).toArray();
+            res.send(allPosts);
+        })
 
+
+    //verified sell routes    
         app.put('/allUsers/verified/:id',async(req,res)=>{
             const id = req.params.id;
             const filter = { _id: ObjectId(id) }
