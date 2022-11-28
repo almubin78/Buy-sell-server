@@ -56,11 +56,12 @@ async function run(){
             res.send(insertedData)
         })
         
-        app.get('/tempCollection',async(req,res)=>{
-            const query = {};
-            const getPost = await tempProductCollection.find(query).toArray();
-            res.send(getPost)
-        })
+        // app.get('/tempCollection',async(req,res)=>{
+        //     const query = {};
+        //     const getPost = await tempProductCollection.find(query).toArray();
+        //     res.send(getPost)
+        // })
+        
         app.get('/sellers',async(req,res)=>{
             
             const getPost = await sellerCollection.find({role:'seller'}).toArray();
@@ -76,11 +77,8 @@ async function run(){
             const getPost = await sellerCollection.find(query).toArray();
             res.send(getPost)
         })
-        app.get('/category',async(req,res)=>{
-            const query = {}
-            const getPost = await sellerCollection.find(query).toArray();
-            res.send(getPost)
-        })
+        
+        
         
   //Posts Routes      
         app.post('/posts',async(req,res)=>{
