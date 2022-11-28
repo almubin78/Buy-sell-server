@@ -91,6 +91,24 @@ async function run(){
             const allPosts = await sellPosts.find(query).toArray();
             res.send(allPosts);
         })
+        app.get('/category/AntiquePhone',async(req,res)=>{
+            
+            const getOneProduct = await sellPosts.find({category:'AntiquePhone'}).toArray();
+            // console.log('getOneProduct',getOneProduct);
+            res.send(getOneProduct)
+        })
+        app.get('/category/SmartPhone',async(req,res)=>{
+            
+            const getOneProduct = await sellPosts.find({category:'SmartPhone'}).toArray();
+            // console.log('getOneProduct',getOneProduct);
+            res.send(getOneProduct)
+        })
+        app.get('/category/ButtonPhone',async(req,res)=>{
+            
+            const getOneProduct = await sellPosts.find({category:'ButtonPhone'}).toArray();
+            // console.log('getOneProduct',getOneProduct);
+            res.send(getOneProduct)
+        })
 
 
     //verified sell routes    
