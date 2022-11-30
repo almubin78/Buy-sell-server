@@ -6,9 +6,9 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const port = process.env.PORT || 5000;
-//https://assigment-12-server-almubin78.vercel.app/json?email=almubin78@gmail.com
-//https://assigment-12-server-almubin78.vercel.app/json?email=mohosina107@gmail.com
-//https://assigment-12-server-almubin78.vercel.app/json?email=mubinmim107@gmail.com
+//http://localhost:5000/json?email=almubin78@gmail.com
+//http://localhost:5000/json?email=mohosina107@gmail.com
+//http://localhost:5000/json?email=mubinmim107@gmail.com
 app.use(cors());
 app.use(express.json());
 
@@ -19,7 +19,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 function verifyToken(req, res, next) {
     const authHeader = req.headers.authorization;
 
-    console.log('authHeader',authHeader);
+    // console.log('authHeader',authHeader);
 
     if (!authHeader) {
         return res.status(401).send('unauthorized access')
@@ -27,15 +27,16 @@ function verifyToken(req, res, next) {
     }
     const token = authHeader.split(' ')[1];
 
-    console.log('token by useing verifyToken::', token);
-    console.log('process.env.ACCESS_TOKEN,',process.env.ACCESS_TOKEN)
+    // console.log('token by useing ##verifyToken::::::::', token);
+    // console.log('####process.env.ACCESS_TOKEN:::::::::::::,',process.env.ACCESS_TOKEN)
 
-    jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-        console.log('verifyToken Function::',err,decoded);
-        if (err) { 
+    jwt.verify(token, process.env.ACCESS_TOKEN, function (TAL, MAL) {
+        // console.log('###verifyToken Function ###err[TAL],decoded[MAL]::::::::::::',TAL,'DECODED',MAL);
+        if (TAL) { 
             return res.status(403).send({ message: 'From verifyToken:forbidden access' }) 
         }
-        req.decoded = decoded;
+        req.decoded = MAL;
+        // console.log('Final DECODED##',req.decoded);
         next()
     })
 }
@@ -58,24 +59,25 @@ async function run() {
             console.log('fireBasetoken:::::jwt.sign(mail,randomToken,expDate)::::::');
             return res.send({ accToken: fireBasetoken })
         })
-        /////////Icche Route//////////
+        /////////Verified Admin//////////
         const verifyAdmin = async (req, res, next) => {
             const decodedEmail = req.decoded.email;
             console.log('decodedEmail in verifyAdmin function',req.decoded);
             const query = { email: decodedEmail };
-            const user = await usersCollection.findOne(query);
+            const user = await sellerCollection.findOne(query);
             if (user?.role !== 'admin') {
                 return res.status(403).send({ message: 'verifyAdmin:forbidden access' })
             }
             next();
         }
+        /////////Verified Admin//////////
         const verifySeller = async (req, res, next) => {
             const decodedEmail = req.decoded.email;
-            console.log('decodedEmail in verifySeller function',decodedEmail);
+            console.log('decodedEmail in ##verifySeller function',decodedEmail);
             const query = { email: decodedEmail };
-            const user = await usersCollection.findOne(query);
+            const user = await sellerCollection.findOne(query);
             if (user?.role !== 'seller') {
-                return res.status(403).send({ message: 'verifySeller:forbidden access' })
+                return res.status(403).send({ message: '###verifySeller:forbidden access' })
             }
             next();
         }
@@ -122,15 +124,15 @@ async function run() {
             res.send(getPost)
         })
         app.get('/signleposts', async (req, res) => {
-            const query = {}
-            const getPost = await sellPosts.find(query).toArray();
+            
+            const getPost = await sellPosts.find({isApproved : true}).toArray();
             res.send(getPost)
         })
 
 
 
         //Posts Routes      
-        app.post('/posts', async (req, res) => {
+        app.post('/posts', verifyToken,verifySeller,async (req, res) => {
             const newPost = req.body;
             const getPost = await sellPosts.insertOne(newPost);
             res.send(getPost)
@@ -180,19 +182,31 @@ async function run() {
             const result = await sellerCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
-        app.delete('/deleteSeller/:id', async (req, res) => {
+        app.delete('/deleteSeller/:id',verifyToken,verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const deletedId = await sellerCollection.deleteOne(query);
             res.send(deletedId)
         })
-        app.delete('/posts/:id', async (req, res) => {
+        app.delete('/posts/:id',verifyToken,verifySeller, async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const deletedId = await sellPosts.deleteOne(query);
             res.send(deletedId)
         })
-
+        app.put('/posts/approved/:id', verifyToken,verifySeller,async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isApproved: true
+                }
+            }
+            const result = await sellPosts.updateOne(filter, updatedDoc, options); //
+            res.send(result);
+        })
+        
 
     }
     finally {
