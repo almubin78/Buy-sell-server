@@ -6,9 +6,7 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const port = process.env.PORT || 5000;
-//http://localhost:5000/json?email=almubin78@gmail.com
-//http://localhost:5000/json?email=mohosina107@gmail.com
-//http://localhost:5000/json?email=mubinmim107@gmail.com
+
 app.use(cors());
 app.use(express.json());
 
@@ -182,6 +180,18 @@ async function run() {
             const result = await sellerCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
+        app.put('/advertise/approved/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isBooked: true
+                }
+            }
+            const result = await sellPosts.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
         app.delete('/deleteSeller/:id',verifyToken,verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
@@ -221,5 +231,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log('Last Assignment in Progress, ', port);
+    console.log('Assignment in Progress, ', port);
 })
